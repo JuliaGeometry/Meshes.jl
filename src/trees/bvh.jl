@@ -117,15 +117,15 @@ function _splitdim(centers, perm, firstind, lastind)
 end
 
 """
-    foreachcandidate(f, geombox, tree, stack)
+    foreachcandidate(func, geombox, tree, stack)
 
-Apply `f` to each original element index whose cached box in `tree` intersects `geombox`.
+Apply `func` to each original element index whose cached box in `tree` intersects `geombox`.
 
 This function is allocation-free apart from its internal traversal stack and is intended as the primitive 
 interface for algorithms that process candidates immediately, avoiding the need to materialize an intermediate
 vector of indices.
 """
-function foreachcandidate(f::F, geombox::Box, tree::BVHTree, stack) where {F}
+function foreachcandidate(func, geombox::Box, tree::BVHTree, stack)
   # initialize a stack with the root node index
   empty!(stack)
   push!(stack, 1)
@@ -133,8 +133,7 @@ function foreachcandidate(f::F, geombox::Box, tree::BVHTree, stack) where {F}
   # traverse the BVH using a stack-based approach to find all nodes whose bounding boxes intersect with the query bounding box
   while !isempty(stack)
     # pop the last node index from the stack and retrieve the corresponding node from the BVH
-    nodeid = pop!(stack)
-    node = tree.nodes[nodeid]
+    node = tree.nodes[pop!(stack)]
 
     # check if the bounding box of the current node intersects with the geom bounding box; if not, skip to the next iteration
     intersects(node.box, geombox) || continue
@@ -145,7 +144,7 @@ function foreachcandidate(f::F, geombox::Box, tree::BVHTree, stack) where {F}
       @inbounds for k in abs(node.left):node.right
         ind = tree.perm[k]
         intersects(tree.boxes[ind], geombox) || continue
-        f(ind)
+        func(ind)
       end
     else
       push!(stack, node.left)
