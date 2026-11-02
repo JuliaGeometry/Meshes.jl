@@ -50,6 +50,12 @@
   @test d(seg1, seg7) ≈ T(1) * u"m"
   @test d(seg1, seg8) ≈ T(√8) * u"m"
 
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/1478
+  d = EuclideanDistance()
+  s1 = Segment(cart(1, 1, 0), cart(8, 2, 0))
+  s2 = Segment(cart(4, 0, 0), cart(8, 0, 0))
+  @test d(s1, s2) == d(s2, s1) ≈ T(√2) * u"m"
+
   # Mahalanobis distance is a generalization of the Euclidean distance
   d = MahalanobisDistance((T(1), T(1)))
   @test d(cart(0, 0), cart(1, 1)) == EuclideanDistance()(cart(0, 0), cart(1, 1))

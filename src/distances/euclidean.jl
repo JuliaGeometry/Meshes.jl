@@ -44,12 +44,9 @@ end
 function (d::EuclideanDistance)(s₁::Segment, s₂::Segment)
   λ₁, λ₂, r, rₐ = intersectparameters(s₁(0), s₁(1), s₂(0), s₂(1))
   λ₁′ = clamp(λ₁, zero(λ₁), one(λ₁))
-  λ₂′ = clamp(λ₂, zero(λ₂), one(λ₂))
-  if (r == rₐ == 1) || (r == 1 && rₐ == 2)  # segments are colinear or parallel
-    min(d(s₁(0), s₂), d(s₁(1), s₂))
-  else  # get distance between closest points on each segment
-    d(s₁(λ₁′), s₂(λ₂′))
-  end
+  p₁′ = s₁(λ₁′)
+  p₂′ = _nearestpoint(p₁′, s₂)
+  min(d(p₁′, p₂′), d(s₁, s₂(0)), d(s₁, s₂(1)))
 end
 
 # exploit symmetry to get more methods for free
