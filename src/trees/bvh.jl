@@ -68,33 +68,34 @@ function BVHTree(boxes::AbstractVector{<:Box}; leafsize=8)
 end
 
 function _buildbvh!(nodes, boxes, centers, perm, firstind, lastind, leafsize)
-  # reserve the node position so that the root remains node 1.
+  # reserve the current node before constructing its descendants
   ind = length(nodes) + 1
-  box = boxes[perm[firstind]]
-  push!(nodes, BVHNode(box, 0, 0))
+  push!(nodes, BVHNode(boxes[perm[firstind]], 0, 0))
+  leafnode = lastind - firstind + 1 ≤ leafsize
 
-  # arrived at a leaf node, store the range of elements and return; the negative first index indicates a leaf
-  if lastind - firstind + 1 ≤ leafsize
+  if leafnode # this is a leaf node, compute the bounding box for the range and store the leaf range
     box = boundingbox(boxes[perm[i]] for i in firstind:lastind)
-    nodes[ind] = BVHNode(box, -firstind, lastind)
-    return ind
+    left = -firstind
+    right = lastind
+  else # this is an internal node, split and recursively build the children
+    # find dimension to split
+    dim = _splitdim(centers, perm, firstind, lastind)
+
+    # sort the elements in the range [firstind, lastind] by the center of their bounding boxes along the chosen dim
+    pview = view(perm, firstind:lastind)
+    sort!(pview; by=i -> centers[i][dim])
+    localind = cld(length(pview), 2)
+    middleind = firstind + localind - 1
+
+    # recursively build and store in `nodes` the left and right children
+    left = _buildbvh!(nodes, boxes, centers, perm, firstind, middleind, leafsize)
+    right = _buildbvh!(nodes, boxes, centers, perm, middleind + 1, lastind, leafsize)
+
+    # current nodes' bounding box is the bounding box of its left and right children
+    box = boundingbox((nodes[left].box, nodes[right].box))
   end
 
-  # find dimension to split
-  dim = _splitdim(centers, perm, firstind, lastind)
-
-  # sort the elements in the range [firstind, lastind] by the center of their bounding boxes along the chosen dim
-  pview = view(perm, firstind:lastind)
-  sort!(pview; by=i -> centers[i][dim])
-  localind = cld(length(pview), 2)
-  middleind = firstind + localind - 1
-
-  # recursively build and store in `nodes` the left and right children
-  left = _buildbvh!(nodes, boxes, centers, perm, firstind, middleind, leafsize)
-  right = _buildbvh!(nodes, boxes, centers, perm, middleind + 1, lastind, leafsize)
-
-  # store the current node with the bounding box and the indices of the left and right children
-  box = boundingbox((nodes[left].box, nodes[right].box))
+  # store the current node with its bounding box and either the left and right children indices or the leaf range
   nodes[ind] = BVHNode(box, left, right)
 
   # return the current node index to the caller so that it can be stored in its parent node
