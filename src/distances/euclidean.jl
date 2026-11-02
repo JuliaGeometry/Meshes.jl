@@ -46,8 +46,6 @@ function (d::EuclideanDistance)(s₁::Segment, s₂::Segment)
   λ₁′ = clamp(λ₁, zero(λ₁), one(λ₁))
   p₁′ = s₁(λ₁′)
   p₂′ = _nearestpoint(p₁′, s₂)
-  # The closest distance is the min of the clamped line line intersection
-  # or from any end point to the other segment
   min(
     d(p₁′, p₂′),
     d(s₁, s₂(0)),
