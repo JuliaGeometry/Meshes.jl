@@ -18,10 +18,9 @@
   @test_throws ArgumentError Meshes.BVHTree(boxes, leafsize=-1)
   for leafsize in (1, 2, 8, 64)
     ltree = @inferred Meshes.BVHTree(boxes; leafsize)
-    stack = Int[]
     for query in (Box(cart(5.5, 0), cart(12.5, 1)), boundingbox(boxes), Box(cart(100, 0), cart(101, 1)))
       candidates = Int[]
-      Meshes.foreachcandidate(i -> push!(candidates, i), query, ltree, stack)
+      Meshes.foreachcandidate(i -> push!(candidates, i), query, ltree)
       @test sort(candidates) == findall(box -> intersects(box, query), boxes)
     end
   end

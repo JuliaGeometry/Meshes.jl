@@ -22,9 +22,8 @@ BBoxSearch(geoms; leafsize=8) = BBoxSearch(GeometrySet(geoms); leafsize)
 
 function search(geom, method::BBoxSearch; mask=nothing)
   inds = Int[]
-  stack = Int[]
 
-  foreachcandidate(boundingbox(geom), method.tree, stack) do ind
+  foreachcandidate(boundingbox(geom), method.tree) do ind
     if isnothing(mask) || mask[ind]
       push!(inds, ind)
     end

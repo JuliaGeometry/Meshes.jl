@@ -117,40 +117,33 @@ function _splitdim(centers, perm, firstind, lastind)
 end
 
 """
-    foreachcandidate(func, geombox, tree, stack)
+    foreachcandidate(func, geombox, tree, nodeind=1)
 
 Apply `func` to each original element index whose cached box in `tree` intersects `geombox`.
 
-This function is allocation-free apart from its internal traversal stack and is intended as the primitive 
-interface for algorithms that process candidates immediately, avoiding the need to materialize an intermediate
-vector of indices.
+This function is allocation-free and is intended as the primitive interface for algorithms that 
+process candidates immediately, avoiding the need to materialize an intermediate vector of indices.
 """
-function foreachcandidate(func, geombox::Box, tree::BVHTree, stack)
-  # initialize a stack with the root node index
-  empty!(stack)
-  push!(stack, 1)
+function foreachcandidate(func, geombox::Box, tree::BVHTree, nodeind=1)
+  node = tree.nodes[nodeind]
 
-  # traverse the BVH using a stack-based approach to find all nodes whose bounding boxes intersect with the query bounding box
-  while !isempty(stack)
-    # pop the last node index from the stack and retrieve the corresponding node from the BVH
-    node = tree.nodes[pop!(stack)]
+  # check if the bounding box of the current node intersects with the geom bounding box; if not, skip this node
+  intersects(node.box, geombox) || return nothing
 
-    # check if the bounding box of the current node intersects with the geom bounding box; if not, skip to the next iteration
-    intersects(node.box, geombox) || continue
-
-    # if the current node is a leaf node, check each element in the range [firstind, lastind] to see if its bounding box intersects
-    # with the geom bounding box; if so, add its index to the output vector
-    if isleaf(node)
-      @inbounds for k in abs(node.left):node.right
-        ind = tree.perm[k]
-        intersects(tree.boxes[ind], geombox) || continue
-        func(ind)
-      end
-    else
-      push!(stack, node.left)
-      push!(stack, node.right)
+  # if the current node is a leaf node, check each element in the range [firstind, lastind] to see if its bounding box intersects
+  # with the geom bounding box; if so, apply the function
+  if isleaf(node)
+    @inbounds for k in abs(node.left):node.right
+      ind = tree.perm[k]
+      intersects(tree.boxes[ind], geombox) || continue
+      func(ind)
     end
+  else
+    foreachcandidate(func, geombox, tree, node.right)
+    foreachcandidate(func, geombox, tree, node.left)
   end
+
+  nothing
 end
 
 isleaf(node::BVHNode) = node.left < 0
