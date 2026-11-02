@@ -42,8 +42,6 @@
   seg6 = Segment(cart(0, -1, 0), cart(0, -2, 0))  # seg6 intersects seg1, if infinite
   seg7 = Segment(cart(2, 0, 0), cart(4, 0, 0))  # seg7 colinear with seg1 but shifted (gap of 1)
   seg8 = Segment(cart(3, -2, 0), cart(5, -2, 0))  # seg8 ∥ seg1 but offset (gap of 2 by 2=√8)
-  seg9 = Segment(cart(1, 1, 0), cart(8, 2, 0))
-  seg10 = Segment(cart(4, 0, 0), cart(8, 0, 0))  # seg9 and seg10 are closest at an endpoint of seg10
   @test d(seg1, seg2) ≈ T(1) * u"m"
   @test d(seg1, seg3) ≈ T(1) * u"m"
   @test d(seg1, seg4) ≈ T(0) * u"m"
@@ -51,8 +49,12 @@
   @test d(seg1, seg6) ≈ T(1) * u"m"
   @test d(seg1, seg7) ≈ T(1) * u"m"
   @test d(seg1, seg8) ≈ T(√8) * u"m"
-  @test d(seg9, seg10) ≈ T(√2) * u"m"
-  @test d(seg10, seg9) ≈ T(√2) * u"m"
+
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/1478
+  d = EuclideanDistance()
+  s1 = Segment(cart(1, 1, 0), cart(8, 2, 0))
+  s2 = Segment(cart(4, 0, 0), cart(8, 0, 0))
+  @test d(s1, s2) == d(s2, s1) ≈ T(√2) * u"m"
 
   # Mahalanobis distance is a generalization of the Euclidean distance
   d = MahalanobisDistance((T(1), T(1)))
