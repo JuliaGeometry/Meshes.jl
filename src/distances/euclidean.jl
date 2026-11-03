@@ -42,9 +42,9 @@ function (d::EuclideanDistance)(l₁::Line, l₂::Line)
 end
 
 function (d::EuclideanDistance)(s₁::Segment, s₂::Segment)
-  # This method is a combination of a Gram-Schmidt solve
-  # and the clamp and reproject method of
-  # Ericson, "Real-Time Collision Detection" (2005), §5.1.9
+  # this method is a combination of a Gram-Schmidt solve
+  # and the clamp and reproject method of Ericson,
+  # "Real-Time Collision Detection" (2005), §5.1.9
   # http://www.r-5.org/files/books/computers/algo-list/realtime-3d/Christer_Ericson-Real-Time_Collision_Detection-EN.pdf
   v₁ = s₁(1) - s₁(0)
   v₂ = s₂(1) - s₂(0)
@@ -61,9 +61,9 @@ function (d::EuclideanDistance)(s₁::Segment, s₂::Segment)
   rp = fma.(-ar, v₁, r) # component of r ⟂ to v₁
   # in the plane ⟂ to v₁ find the nearest point on s₂
   λ₂ = _clamp01nan(-(rp ⋅ v₂p) / (v₂p ⋅ v₂p))
-  # Then find the nearest point on s₁ to that (we can reuse the divide by a)
+  # then find the nearest point on s₁ to that (we can reuse the divide by a)
   λ₁ = _clamp01nan(fma(λ₂, av₂, ar))
-  # Then find the nearest point on s₂ to that
+  # then find the nearest point on s₂ to that
   λ₂′ = _clamp01nan(fma(λ₁, b, -e) / c)
   norm(fma.(λ₂′, v₂, fma.(-λ₁, v₁, r)))
 end
@@ -75,6 +75,7 @@ end
 # HELPER FUNCTIONS
 # -----------------
 
+# NaN λ becomes zero to handle degenerate segments
 function _clamp01nan(λ)
   λ′ = ifelse(λ > zero(λ), λ, zero(λ))
   ifelse(λ′ < one(λ), λ′, one(λ))
@@ -87,7 +88,6 @@ end
 
 function _nearestpoint(p::Point, s::Segment)
   λ, a, b = _nearestparams(p, s)
-  # NaN λ becomes zero to handle degenerate segments
   λ′ = _clamp01nan(λ)
   a + λ′ * (b - a)
 end
