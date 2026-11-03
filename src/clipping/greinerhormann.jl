@@ -99,8 +99,8 @@ function _ghintersect(rings₁, rings₂)
   vs₂ = [_ghvertices(P, r) for r in rings₂]
 
   # events attached to original vertices, and inserted along edges
-  tag₁ = [zeros(Int, length(v)) for v in vs₁]
-  tag₂ = [zeros(Int, length(v)) for v in vs₂]
+  tag₁ = [Vector{Vector{Int}}(undef, length(v)) for v in vs₁]
+  tag₂ = [Vector{Vector{Int}}(undef, length(v)) for v in vs₂]
   ins₁ = [[Tuple{T,P,Int}[] for _ in v] for v in vs₁]
   ins₂ = [[Tuple{T,P,Int}[] for _ in v] for v in vs₂]
 
@@ -205,7 +205,7 @@ _ghvertices(P, r) = eltype(vertices(r)) === P ? vertices(r) : CircularVector(col
 
 _ghinunit(λ) = (λ > 0 || isapproxzero(λ)) && (λ < 1 && !isapproxone(λ))
 
-_ghtag!(tag, i, event) = iszero(tag[i]) && (tag[i] = event)
+_ghtag!(tag, i, event) = isassigned(tag, i) ? push!(tag[i], event) : (tag[i] = [event])
 
 _ghins!(ins, i, event) = push!(ins[i], event)
 
@@ -219,10 +219,16 @@ function _ghlist(vs, tag, ins)
     start = length(verts) + 1
     for i in eachindex(vs[r])
       thispoint = vs[r][i]
-      thisevent = tag[r][i]
-      intersect = !iszero(thisevent)
-      push!(verts, GHVertex(point=thispoint, intersect=intersect))
-      intersect && (idict[thisevent] = length(verts))
+      if isassigned(tag[r], i)
+        # a vertex on more than one ring of the other polygon gets
+        # a copy for each ring, so that every ring has its own link
+        for event in tag[r][i]
+          push!(verts, GHVertex(point=thispoint, intersect=true))
+          idict[event] = length(verts)
+        end
+      else
+        push!(verts, GHVertex(point=thispoint, intersect=false))
+      end
       for (_, point, event) in sort(ins[r][i], by=first)
         push!(verts, GHVertex(point=point, intersect=true))
         idict[event] = length(verts)
@@ -257,9 +263,9 @@ function _ghcrossing!(list₁, list₂)
     elseif types[i] ∈ (:lefton, :righton)
       # chain of vertices along a common segment
       x = types[i] == :lefton ? :left : :right
-      j = _ghnext(list₁, i)
+      j = _ghchainnext(list₁, list₂, i)
       while types[j] == :onon
-        j = _ghnext(list₁, j)
+        j = _ghchainnext(list₁, list₂, j)
       end
       y = types[j] == :onleft ? :left : (types[j] == :onright ? :right : :none)
       # delayed crossing if the polygon changes side along the chain
@@ -274,28 +280,42 @@ function _ghcrossing!(list₁, list₂)
   end
 end
 
+# vertex at the next point that is linked to the same ring of the other polygon
+function _ghchainnext(list₁, list₂, i)
+  ring = list₂.compof[list₁.verts[i].neighbor]
+  j = _ghnextpoint(list₁, i)
+  k = j
+  while list₁.verts[k].point ≈ list₁.verts[j].point
+    v = list₁.verts[k]
+    v.intersect && list₂.compof[v.neighbor] == ring && return k
+    k = _ghnext(list₁, k)
+    k == j && break
+  end
+  j
+end
+
 # local position of the first polygon with respect to the second one
 function _ghlocaltype(list₁, list₂, i)
-  p₋ = list₁.verts[_ghprev(list₁, i)]
+  p₋ = list₁.verts[_ghprevpoint(list₁, i)]
   p₀ = list₁.verts[i]
-  p₊ = list₁.verts[_ghnext(list₁, i)]
+  p₊ = list₁.verts[_ghnextpoint(list₁, i)]
 
   k = p₀.neighbor
-  q₋ = list₂.verts[_ghprev(list₂, k)]
-  q₊ = list₂.verts[_ghnext(list₂, k)]
+  q₋ = list₂.verts[_ghprevpoint(list₂, k)]
+  q₊ = list₂.verts[_ghnextpoint(list₂, k)]
 
   # edges of the first polygon that overlap with the second one
-  onnext = p₊.intersect && (p₊.neighbor == _ghprev(list₂, k) || p₊.neighbor == _ghnext(list₂, k))
-  onprev = p₋.intersect && (p₋.neighbor == _ghprev(list₂, k) || p₋.neighbor == _ghnext(list₂, k))
+  onnext = p₊.intersect && (p₊.point ≈ q₋.point || p₊.point ≈ q₊.point)
+  onprev = p₋.intersect && (p₋.point ≈ q₋.point || p₋.point ≈ q₊.point)
 
   if onnext && onprev
     :onon
   elseif onnext
-    q = p₊.neighbor == _ghnext(list₂, k) ? q₋ : q₊
+    q = p₊.point ≈ q₊.point ? q₋ : q₊
     side = _ghsideof(q.point, p₋.point, p₀.point, p₊.point)
     side == :right ? :lefton : :righton
   elseif onprev
-    q = p₋.neighbor == _ghprev(list₂, k) ? q₊ : q₋
+    q = p₋.point ≈ q₋.point ? q₊ : q₋
     side = _ghsideof(q.point, p₋.point, p₀.point, p₊.point)
     side == :right ? :onleft : :onright
   else
@@ -315,6 +335,24 @@ end
 function _ghprev(list, i)
   r = list.comps[list.compof[i]]
   i == first(r) ? last(r) : i - 1
+end
+
+# next vertex at another point, skipping copies of the same vertex
+function _ghnextpoint(list, i)
+  j = _ghnext(list, i)
+  while j ≠ i && list.verts[j].point ≈ list.verts[i].point
+    j = _ghnext(list, j)
+  end
+  j
+end
+
+# previous vertex at another point, skipping copies of the same vertex
+function _ghprevpoint(list, i)
+  j = _ghprev(list, i)
+  while j ≠ i && list.verts[j].point ≈ list.verts[i].point
+    j = _ghprev(list, j)
+  end
+  j
 end
 
 # side of the point with respect to the chain of two edges
@@ -499,9 +537,13 @@ function _ghnested(inner, outer)
 end
 
 function _ghsimplify(points)
-  n = length(points)
-  n < 3 && return points
-  pts = CircularVector(points)
+  # copies of a vertex repeat its point
+  cpoints = CircularVector(points)
+  repeated(i) = cpoints[i] ≈ cpoints[i - 1]
+  upoints = any(repeated, eachindex(points)) ? [cpoints[i] for i in eachindex(points) if !repeated(i)] : points
+  n = length(upoints)
+  n < 3 && return upoints
+  pts = CircularVector(upoints)
   keep = [i for i in 1:n if !isapproxzero(signarea(pts[i - 1], pts[i], pts[i + 1]))]
-  length(keep) < 3 ? points : points[keep]
+  length(keep) < 3 ? upoints : upoints[keep]
 end

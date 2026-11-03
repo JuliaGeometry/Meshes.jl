@@ -1518,6 +1518,32 @@ end
   @test measure(d) ≈ T(75) * u"m^2"
   @test length(rings(d)) == 2
 
+  # vertex of the other polygon on both the outer ring and a hole
+  p = Pgon([cart.([(0, 0), (3, 0), (3, 3), (0, 3)]), cart.([(0, 0), (0, 1), (1, 1), (1, 0)])])
+  q = Pgon(cart.([(0, 1), (1, 1), (1, 2), (0, 2)]))
+  @test p ∩ q == q ∩ p == q
+  @test p ∪ q == q ∪ p == p
+  @test setdiff(p, q) == Pgon([
+    cart.([(0, 0), (3, 0), (3, 3), (0, 3)]),
+    cart.([(0, 0), (0, 1), (1, 1), (1, 0)]),
+    cart.([(0, 1), (0, 2), (1, 2), (1, 1)])
+  ])
+
+  # hole that touches the outer ring at a vertex of the other polygon
+  p = Pgon([cart.([(0, 0), (4, 0), (4, 4), (0, 4)]), cart.([(2, 0), (1, 1), (2, 2), (3, 1)])])
+  q = Pgon(cart.([(2, 0), (3, 0), (3, 3), (2, 3)]))
+  @test measure(p ∩ q) == measure(q ∩ p) ≈ T(2) * u"m^2"
+  @test p ∪ q == Pgon([cart.([(0, 0), (4, 0), (4, 4), (0, 4)]), cart.([(1, 1), (2, 2), (2, 0)])])
+  @test setdiff(p, q) ==
+        Pgon([cart.([(0, 0), (4, 0), (4, 4), (0, 4)]), cart.([(1, 1), (2, 2), (2, 3), (3, 3), (3, 0), (2, 0)])])
+
+  # common edges that pass through a vertex where a hole touches the outer ring
+  p = Pgon(cart.([(0, 0), (1, 0), (8, 0), (8, 3), (0, 3)]))
+  q = Pgon([cart.([(-1, 0), (6, 0), (6, 6), (-1, 6)]), cart.([(1, 0), (0.5, 0.5), (1, 1), (1.5, 0.5)])])
+  @test measure(p ∩ q) == measure(q ∩ p) ≈ T(17.5) * u"m^2"
+  @test measure(p ∪ q) == measure(q ∪ p) ≈ T(48) * u"m^2"
+  @test measure(setdiff(p, q)) ≈ T(6.5) * u"m^2"
+
   # disjoint polygons
   q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   q2 = Quadrangle(cart(10, 10), cart(11, 10), cart(11, 11), cart(10, 11))
