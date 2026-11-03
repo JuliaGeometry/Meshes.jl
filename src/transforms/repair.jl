@@ -248,13 +248,12 @@ end
 # ---------------
 
 function apply(::Repair{13}, poly::Pgon)
-  (hasholes(poly) && manifold(poly) <: 𝔼{2}) || return poly, nothing
-
   r = rings(poly)
-  outer = collect(vertices(first(r)))
-  inners = [collect(vertices(rᵢ)) for rᵢ in r[2:end]]
+  (hasholes(poly) && embeddim(flat(first(vertices(first(r))))) == 2) || return poly, nothing
 
   # a merge can bring another inner ring onto the outer ring
+  outer = first(r)
+  inners = r[2:end]
   merged = true
   while merged
     merged = false
@@ -268,20 +267,24 @@ function apply(::Repair{13}, poly::Pgon)
     end
   end
 
-  Pgon([Ring(outer); Ring.(inners)]), nothing
+  Pgon([outer; inners]), nothing
 end
 
 apply(::Repair{13}, poly::Ngon) = poly, nothing
 
 # outer ring with the inner ring spliced in along a shared edge, or nothing
-function _merge13(outer, inner)
+function _merge13(outer::Ring, inner::Ring)
+  o = vertices(outer)
+  c = vertices(inner)
+  n = length(c)
+
   # walk the inner ring against the outer ring
-  h = orientation(Ring(inner)) == orientation(Ring(outer)) ? reverse(inner) : inner
-  o = CircularVector(outer)
-  c = CircularVector(h)
-  for i in eachindex(outer), j in eachindex(h)
-    P, Q = o[i], o[i + 1]
-    R, S = c[j], c[j + 1]
+  d = orientation(inner) == orientation(outer) ? -1 : 1
+
+  # the edges are compared in flat coordinates, as in Repair(8)
+  for i in eachindex(o), j in eachindex(c)
+    P, Q = flat(o[i]), flat(o[i + 1])
+    R, S = flat(c[j]), flat(c[j + d])
     (isapproxzero(signarea(P, Q, R)) && isapproxzero(signarea(P, Q, S))) || continue
 
     # positions of the inner edge along the outer edge
@@ -292,11 +295,10 @@ function _merge13(outer, inner)
 
     # the shared part ends at vertices of the two edges,
     # go around the inner ring between them
-    X = t(S) > 0 ? S : P
-    Y = t(R) < 1 ? R : Q
-    walk = [c[j + k] for k in 1:length(h)]
-    points = [outer[1:i]; X; walk; Y; outer[(i + 1):end]]
-    return [p for (k, p) in enumerate(points) if k == 1 || !(p ≈ points[k - 1])]
+    X = t(S) > 0 ? c[j + d] : o[i]
+    Y = t(R) < 1 ? c[j] : o[i + 1]
+    points = [o[1:i]; X; [c[j + d * k] for k in 1:n]; Y; o[(i + 1):end]]
+    return Ring([p for (k, p) in enumerate(points) if k == 1 || !(p ≈ points[k - 1])])
   end
   nothing
 end

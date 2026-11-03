@@ -2466,6 +2466,15 @@ end
   rpoly, cache = TB.apply(repair, poly)
   @test rpoly == Pgon(cart.([(0, 0), (2, 0), (2, 1), (3, 1), (3, 0), (6, 0), (6, 6), (0, 6)]))
 
+  # inner ring with an edge on the outer ring over the ellipsoid
+  outer = latlon.([(2, 0), (0, 0), (0, 10), (10, 10), (10, 0), (8, 0), (8, 3), (2, 3)])
+  inner = latlon.([(3, 3), (7, 3), (7, 7), (3, 7)])
+  poly = Pgon(outer, inner)
+  rpoly, cache = TB.apply(repair, poly)
+  @test rpoly == Pgon(
+    latlon.([(2, 0), (0, 0), (0, 10), (10, 10), (10, 0), (8, 0), (8, 3), (7, 3), (7, 7), (3, 7), (3, 3), (2, 3)])
+  )
+
   # inner ring away from the outer ring
   outer = cart.([(0, 0), (6, 0), (6, 6), (0, 6)])
   inner = cart.([(2, 2), (2, 4), (4, 4), (4, 2)])
