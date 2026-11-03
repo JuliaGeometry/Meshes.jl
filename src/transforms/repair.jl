@@ -22,7 +22,7 @@ Perform repairing operation with code `K`.
 - K = 10: outer rings of polygon are expanded
 - K = 11: rings of polygon are coherently oriented
 - K = 12: degenerate rings of polygon are removed
-- K = 13: inner rings with an edge on the outer ring are merged into it
+- K = 13: inner rings with an edge on the outer ring are merged
 
 ## Examples
 
