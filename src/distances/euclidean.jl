@@ -42,11 +42,30 @@ function (d::EuclideanDistance)(l₁::Line, l₂::Line)
 end
 
 function (d::EuclideanDistance)(s₁::Segment, s₂::Segment)
-  λ₁, λ₂, r, rₐ = intersectparameters(s₁(0), s₁(1), s₂(0), s₂(1))
-  λ₁′ = clamp(λ₁, zero(λ₁), one(λ₁))
-  p₁′ = s₁(λ₁′)
-  p₂′ = _nearestpoint(p₁′, s₂)
-  min(d(p₁′, p₂′), d(s₁, s₂(0)), d(s₁, s₂(1)))
+  # this method is a combination of a Gram-Schmidt solve
+  # and the clamp and reproject method of Ericson,
+  # "Real-Time Collision Detection" (2005), §5.1.9
+  # http://www.r-5.org/files/books/computers/algo-list/realtime-3d/Christer_Ericson-Real-Time_Collision_Detection-EN.pdf
+  v₁ = s₁(1) - s₁(0)
+  v₂ = s₂(1) - s₂(0)
+  r = s₂(0) - s₁(0)
+  a = v₁ ⋅ v₁
+  b = v₁ ⋅ v₂
+  c = v₂ ⋅ v₂
+  f = v₁ ⋅ r
+  e = v₂ ⋅ r
+  a⁻¹ = inv(a)
+  av₂ = b * a⁻¹
+  ar = f * a⁻¹
+  v₂p = fma.(-av₂, v₁, v₂) # component of v₂ ⟂ to v₁
+  rp = fma.(-ar, v₁, r) # component of r ⟂ to v₁
+  # in the plane ⟂ to v₁ find the nearest point on s₂
+  λ₂ = _clamp01nan(-(rp ⋅ v₂p) / (v₂p ⋅ v₂p))
+  # then find the nearest point on s₁ to that (we can reuse the divide by a)
+  λ₁ = _clamp01nan(fma(λ₂, av₂, ar))
+  # then find the nearest point on s₂ to that
+  λ₂′ = _clamp01nan(fma(λ₁, b, -e) / c)
+  norm(fma.(λ₂′, v₂, fma.(-λ₁, v₁, r)))
 end
 
 # exploit symmetry to get more methods for free
@@ -56,6 +75,12 @@ end
 # HELPER FUNCTIONS
 # -----------------
 
+# NaN λ becomes zero to handle degenerate segments
+function _clamp01nan(λ)
+  λ′ = ifelse(λ > zero(λ), λ, zero(λ))
+  ifelse(λ′ < one(λ), λ′, one(λ))
+end
+
 function _nearestpoint(p::Point, l::Line)
   λ, a, b = _nearestparams(p, l)
   a + λ * (b - a)
@@ -63,7 +88,7 @@ end
 
 function _nearestpoint(p::Point, s::Segment)
   λ, a, b = _nearestparams(p, s)
-  λ′ = clamp(λ, zero(λ), one(λ))
+  λ′ = _clamp01nan(λ)
   a + λ′ * (b - a)
 end
 
