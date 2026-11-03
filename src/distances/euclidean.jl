@@ -64,7 +64,7 @@ function (d::EuclideanDistance)(s₁::Segment, s₂::Segment)
   λ₁ = _clamp01nan(fma(λ₂, av₂, ar))
   # Then find the nearest point on s₂ to that
   λ₂′ = _clamp01nan(fma(λ₁, b, -e) / c)
-  norm(λ₁ * v₁ - fma.(λ₂′, v₂, r))
+  norm(fma.(λ₂′, v₂, fma.(-λ₁, v₁, r)))
 end
 
 # exploit symmetry to get more methods for free
