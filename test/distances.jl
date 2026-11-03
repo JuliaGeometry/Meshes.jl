@@ -56,6 +56,15 @@
   s2 = Segment(cart(4, 0, 0), cart(8, 0, 0))
   @test d(s1, s2) == d(s2, s1) ≈ T(√2) * u"m"
 
+  # Degenerate Segment acts like a point
+  d = EuclideanDistance()
+  p1 = cart(0, 0)
+  p2 = cart(3, 4)
+  @test d(p1, Segment(p2, p2)) == T(5) * u"m"
+  @test d(p1, Segment(p1, p1)) == T(0) * u"m"
+  @test d(Segment(p1, p1), Segment(p2, p2)) == T(5) * u"m"
+  @test d(Segment(p1, p1), Segment(p1, p1)) == T(0) * u"m"
+
   # Mahalanobis distance is a generalization of the Euclidean distance
   d = MahalanobisDistance((T(1), T(1)))
   @test d(cart(0, 0), cart(1, 1)) == EuclideanDistance()(cart(0, 0), cart(1, 1))
