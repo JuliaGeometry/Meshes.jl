@@ -22,6 +22,7 @@ Perform repairing operation with code `K`.
 - K = 10: outer rings of polygon are expanded
 - K = 11: rings of polygon are coherently oriented
 - K = 12: degenerate rings of polygon are removed
+- K = 13: inner rings with an edge on the outer ring are merged into it
 
 ## Examples
 
@@ -240,6 +241,64 @@ function apply(::Repair{12}, poly::Pgon)
   inners = filter(r -> nvertices(r) > 2, r[2:end])
 
   Pgon([outer; inners]), nothing
+end
+
+# ---------------
+# OPERATION (13)
+# ---------------
+
+function apply(::Repair{13}, poly::Pgon)
+  (hasholes(poly) && manifold(poly) <: 𝔼{2}) || return poly, nothing
+
+  r = rings(poly)
+  outer = collect(vertices(first(r)))
+  inners = [collect(vertices(rᵢ)) for rᵢ in r[2:end]]
+
+  # a merge can bring another inner ring onto the outer ring
+  merged = true
+  while merged
+    merged = false
+    for k in eachindex(inners)
+      newouter = _merge13(outer, inners[k])
+      isnothing(newouter) && continue
+      outer = newouter
+      deleteat!(inners, k)
+      merged = true
+      break
+    end
+  end
+
+  Pgon([Ring(outer); Ring.(inners)]), nothing
+end
+
+apply(::Repair{13}, poly::Ngon) = poly, nothing
+
+# outer ring with the inner ring spliced in along a shared edge, or nothing
+function _merge13(outer, inner)
+  # walk the inner ring against the outer ring
+  h = orientation(Ring(inner)) == orientation(Ring(outer)) ? reverse(inner) : inner
+  o = CircularVector(outer)
+  c = CircularVector(h)
+  for i in eachindex(outer), j in eachindex(h)
+    P, Q = o[i], o[i + 1]
+    R, S = c[j], c[j + 1]
+    (isapproxzero(signarea(P, Q, R)) && isapproxzero(signarea(P, Q, S))) || continue
+
+    # positions of the inner edge along the outer edge
+    u = Q - P
+    t(A) = ((A - P) ⋅ u) / (u ⋅ u)
+    tₛ, tᵣ = max(t(S), zero(t(S))), min(t(R), one(t(R)))
+    (tₛ < tᵣ && !isapproxzero((tᵣ - tₛ) * norm(u))) || continue
+
+    # the shared part ends at vertices of the two edges,
+    # go around the inner ring between them
+    X = t(S) > 0 ? S : P
+    Y = t(R) < 1 ? R : Q
+    walk = [c[j + k] for k in 1:length(h)]
+    points = [outer[1:i]; X; walk; Y; outer[(i + 1):end]]
+    return [p for (k, p) in enumerate(points) if k == 1 || !(p ≈ points[k - 1])]
+  end
+  nothing
 end
 
 # ----------

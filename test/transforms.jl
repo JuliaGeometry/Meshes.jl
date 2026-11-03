@@ -2447,6 +2447,30 @@ end
   @test rpoly == Pgon(outer)
 end
 
+@testitem "Repair(13)" setup = [Setup] begin
+  repair = Repair(13)
+
+  # inner ring with an edge on the outer ring
+  outer = cart.([(0, 2), (0, 0), (10, 0), (10, 10), (0, 10), (0, 8), (3, 8), (3, 2)])
+  inner = cart.([(3, 3), (3, 7), (7, 7), (7, 3)])
+  rpoly, cache = TB.apply(repair, Pgon(outer, inner))
+  @test rpoly == Pgon(
+    cart.([(0, 2), (0, 0), (10, 0), (10, 10), (0, 10), (0, 8), (3, 8), (3, 7), (7, 7), (7, 3), (3, 3), (3, 2)])
+  )
+
+  # inner ring with an edge on part of an edge of the outer ring
+  outer = cart.([(0, 0), (6, 0), (6, 6), (0, 6)])
+  inner = cart.([(2, 0), (2, 1), (3, 1), (3, 0)])
+  rpoly, cache = TB.apply(repair, Pgon(outer, inner))
+  @test rpoly == Pgon(cart.([(0, 0), (2, 0), (2, 1), (3, 1), (3, 0), (6, 0), (6, 6), (0, 6)]))
+
+  # inner ring away from the outer ring
+  inner = cart.([(2, 2), (2, 4), (4, 4), (4, 2)])
+  poly = Pgon(outer, inner)
+  rpoly, cache = TB.apply(repair, poly)
+  @test rpoly == poly
+end
+
 @testitem "Repair fallbacks" setup = [Setup] begin
   quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
   repair = Repair(10)
