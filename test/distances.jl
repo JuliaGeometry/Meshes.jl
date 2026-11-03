@@ -56,7 +56,7 @@
   s2 = Segment(cart(4, 0, 0), cart(8, 0, 0))
   @test d(s1, s2) == d(s2, s1) ≈ T(√2) * u"m"
 
-  # Degenerate Segment acts like a point
+  # degenerate Segment acts like a point
   d = EuclideanDistance()
   p1 = cart(0, 0)
   p2 = cart(3, 4)

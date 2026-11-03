@@ -45,6 +45,7 @@ function (d::EuclideanDistance)(s₁::Segment, s₂::Segment)
   # This method is a combination of a Gram-Schmidt solve
   # and the clamp and reproject method of
   # Ericson, "Real-Time Collision Detection" (2005), §5.1.9
+  # http://www.r-5.org/files/books/computers/algo-list/realtime-3d/Christer_Ericson-Real-Time_Collision_Detection-EN.pdf
   v₁ = s₁(1) - s₁(0)
   v₂ = s₂(1) - s₂(0)
   r = s₂(0) - s₁(0)
@@ -53,9 +54,9 @@ function (d::EuclideanDistance)(s₁::Segment, s₂::Segment)
   c = v₂ ⋅ v₂
   f = v₁ ⋅ r
   e = v₂ ⋅ r
-  inva = inv(a)
-  av₂ = b*inva
-  ar = f*inva
+  a⁻¹ = inv(a)
+  av₂ = b * a⁻¹
+  ar = f * a⁻¹
   v₂p = fma.(-av₂, v₁, v₂) # component of v₂ ⟂ to v₁
   rp = fma.(-ar, v₁, r) # component of r ⟂ to v₁
   # in the plane ⟂ to v₁ find the nearest point on s₂
