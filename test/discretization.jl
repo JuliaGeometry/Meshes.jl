@@ -294,7 +294,7 @@ end
     inner = cart.([(3, 3), (3, 7), (7, 7), (7, 3)])
     poly = Pgon(outer, inner)
     mesh = discretize(poly, method)
-    @test sum(area, mesh) ≈ area(poly)
+    @test area(mesh) ≈ area(poly)
   end
 
   if T === Float64
