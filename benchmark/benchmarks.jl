@@ -36,6 +36,7 @@ const SUITE = BenchmarkGroup()
 SUITE["clipping"] = BenchmarkGroup()
 
 SUITE["clipping"]["SutherlandHodgman"] = @benchmarkable clip($poly1, $poly2, SutherlandHodgmanClipping())
+SUITE["clipping"]["GreinerHormann"] = @benchmarkable clip($poly1, $poly2, GreinerHormannClipping())
 
 # ---------------
 # DISCRETIZATION
