@@ -248,8 +248,10 @@ end
 # ---------------
 
 function apply(::Repair{13}, poly::Pgon)
+  # signarea needs 2D points, which flat gives for LatLon but not for 3D
+  (hasholes(poly) && embeddim(flat(vertex(poly, 1))) == 2) || return poly, nothing
+
   r = rings(poly)
-  (hasholes(poly) && embeddim(flat(first(vertices(first(r))))) == 2) || return poly, nothing
 
   # a merge can bring another inner ring onto the outer ring
   outer = first(r)
