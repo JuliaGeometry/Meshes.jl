@@ -22,6 +22,7 @@ Perform repairing operation with code `K`.
 - K = 10: outer rings of polygon are expanded
 - K = 11: rings of polygon are coherently oriented
 - K = 12: degenerate rings of polygon are removed
+- K = 13: inner rings with an edge on the outer ring are merged
 
 ## Examples
 
@@ -240,6 +241,68 @@ function apply(::Repair{12}, poly::Pgon)
   inners = filter(r -> nvertices(r) > 2, r[2:end])
 
   Pgon([outer; inners]), nothing
+end
+
+# ---------------
+# OPERATION (13)
+# ---------------
+
+function apply(::Repair{13}, poly::Pgon)
+  # signarea needs 2D points, which flat gives for LatLon but not for 3D
+  (hasholes(poly) && embeddim(flat(vertex(poly, 1))) == 2) || return poly, nothing
+
+  r = rings(poly)
+
+  # a merge can bring another inner ring onto the outer ring
+  outer = first(r)
+  inners = r[2:end]
+  merged = true
+  while merged
+    merged = false
+    for k in eachindex(inners)
+      newouter = _merge13(outer, inners[k])
+      isnothing(newouter) && continue
+      outer = newouter
+      deleteat!(inners, k)
+      merged = true
+      break
+    end
+  end
+
+  Pgon([outer; inners]), nothing
+end
+
+apply(::Repair{13}, poly::Ngon) = poly, nothing
+
+# outer ring with the inner ring spliced in along a shared edge, or nothing
+function _merge13(outer::Ring, inner::Ring)
+  o = vertices(outer)
+  c = vertices(inner)
+  n = length(c)
+
+  # walk the inner ring against the outer ring
+  d = orientation(inner) == orientation(outer) ? -1 : 1
+
+  # the edges are compared in flat coordinates, as in Repair(8)
+  for i in eachindex(o), j in eachindex(c)
+    P, Q = flat(o[i]), flat(o[i + 1])
+    R, S = flat(c[j]), flat(c[j + d])
+    (isapproxzero(signarea(P, Q, R)) && isapproxzero(signarea(P, Q, S))) || continue
+
+    # positions of the inner edge along the outer edge
+    u = Q - P
+    t(A) = ((A - P) ⋅ u) / (u ⋅ u)
+    tₛ, tᵣ = max(t(S), zero(t(S))), min(t(R), one(t(R)))
+    (tₛ < tᵣ && !isapproxzero((tᵣ - tₛ) * norm(u))) || continue
+
+    # the shared part ends at vertices of the two edges,
+    # go around the inner ring between them
+    X = t(S) > 0 ? c[j + d] : o[i]
+    Y = t(R) < 1 ? c[j] : o[i + 1]
+    points = [o[1:i]; X; [c[j + d * k] for k in 1:n]; Y; o[(i + 1):end]]
+    return Ring([p for (k, p) in enumerate(points) if k == 1 || !(p ≈ points[k - 1])])
+  end
+  nothing
 end
 
 # ----------

@@ -288,6 +288,13 @@ end
     mesh = discretize(poly, method)
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == 32
+
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/1465
+    outer = cart.([(0, 2), (0, 0), (10, 0), (10, 10), (0, 10), (0, 8), (3, 8), (3, 2)])
+    inner = cart.([(3, 3), (3, 7), (7, 7), (7, 3)])
+    poly = Pgon(outer, inner)
+    mesh = discretize(poly, method)
+    @test area(mesh) ≈ area(poly)
   end
 
   if T === Float64
