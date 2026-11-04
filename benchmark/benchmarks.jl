@@ -86,9 +86,10 @@ SUITE["sideof"]["ring"]["large"] = @benchmarkable sideof($point, $ring2)
 
 SUITE["intersects"] = BenchmarkGroup()
 
-SUITE["intersects"]["triangle-tetrahedron"] = @benchmarkable intersects($tri, $tet)
+SUITE["intersects"]["segment-segment"] = @benchmarkable intersects($seg1, $seg2)
 SUITE["intersects"]["box-box"]["overlapping"] = @benchmarkable intersects($box1, $box2)
 SUITE["intersects"]["box-box"]["disjoint"] = @benchmarkable intersects($box1, $box3)
+SUITE["intersects"]["triangle-tetrahedron"] = @benchmarkable intersects($tri, $tet)
 
 # -------------
 # INTERSECTION

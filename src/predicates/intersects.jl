@@ -13,7 +13,7 @@ intersects(g) = Base.Fix2(intersects, g)
 
 intersects(p₁::Point, p₂::Point) = p₁ == p₂
 
-intersects(s₁::Segment, s₂::Segment) = someintersection(s₁, s₂)
+intersects(s₁::Segment, s₂::Segment) = isapproxzero(EuclideanDistance()(s₁, s₂))
 
 function intersects(b₁::Box{<:𝔼}, b₂::Box{<:𝔼})
   min₁, max₁ = to.(extrema(b₁))
