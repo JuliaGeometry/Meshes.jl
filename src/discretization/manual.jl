@@ -43,7 +43,7 @@ function _manualconnec(::Box{𝔼{3}})
   [
     connect((1, 5, 6, 8), Tetrahedron),
     connect((1, 3, 4, 8), Tetrahedron),
-    connect((1, 3, 6, 8), Tetrahedron),
+    connect((1, 3, 8, 6), Tetrahedron),
     connect((1, 2, 3, 6), Tetrahedron),
     connect((3, 6, 7, 8), Tetrahedron)
   ]
@@ -69,7 +69,7 @@ function _manualconnec(::Hexahedron)
   [
     connect((1, 5, 6, 8), Tetrahedron),
     connect((1, 3, 4, 8), Tetrahedron),
-    connect((1, 3, 6, 8), Tetrahedron),
+    connect((1, 3, 8, 6), Tetrahedron),
     connect((1, 2, 3, 6), Tetrahedron),
     connect((3, 6, 7, 8), Tetrahedron)
   ]
