@@ -379,6 +379,12 @@ end
   bmesh = discretize(box, ManualSimplexification())
   hmesh = discretize(hexa, ManualSimplexification())
   @test bmesh == hmesh
+
+  # tetrahedra follow the VTK orientation
+  for tetra in elements(hmesh)
+    a, b, c, d = vertices(tetra)
+    @test (b - a) ⋅ ((c - a) × (d - a)) > zero(T) * u"m^3"
+  end
 end
 
 @testitem "RegularDiscretization" setup = [Setup] begin
