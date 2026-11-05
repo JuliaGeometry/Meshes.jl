@@ -24,6 +24,7 @@ using DelaunayTriangulation: triangulate, voronoi
 using DelaunayTriangulation: each_solid_triangle
 using DelaunayTriangulation: get_polygons
 using DelaunayTriangulation: get_polygon_points
+using DelaunayTriangulation: refine!, each_solid_vertex, get_point, getxy
 using StatsBase: AbstractWeights, Weights, quantile
 using TiledIteration: TileIterator
 using ScopedValues: ScopedValue
@@ -607,6 +608,7 @@ export
   CatmullClarkRefinement,
   RegularRefinement,
   MaxLengthRefinement,
+  DelaunayRefinement,
   refine,
   refinemaxlen,
 
