@@ -170,3 +170,27 @@ viz(fig[2,1], ref2, showsegments = true)
 viz(fig[2,2], ref3, showsegments = true)
 fig
 ```
+
+## DelaunayRefinement
+
+```@docs
+DelaunayRefinement
+```
+
+```@example refinement
+outer = [(0, 0), (10, 0), (10, 10), (0, 10)]
+inner = [(3, 3), (3, 7), (7, 7), (7, 3)]
+mesh = discretize(Pgon(outer, inner))
+
+# refine with the default minimum angle
+ref1 = refine(mesh, DelaunayRefinement())
+
+# refine with a maximum area as well
+ref2 = refine(mesh, DelaunayRefinement(maxarea=1))
+
+fig = Mke.Figure(size = (1200, 400))
+viz(fig[1,1], mesh, showsegments = true)
+viz(fig[1,2], ref1, showsegments = true)
+viz(fig[1,3], ref2, showsegments = true)
+fig
+```
