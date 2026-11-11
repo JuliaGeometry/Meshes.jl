@@ -28,7 +28,7 @@ struct DelaunayRefinement{RNG<:AbstractRNG,ℳ<:Deg,𝒜} <: RefinementMethod
 end
 
 DelaunayRefinement(rng=Random.default_rng(); minangle=30, maxarea=nothing) =
-  DelaunayRefinement(rng, asdeg(minangle), isnothing(maxarea) ? nothing : _asarea(maxarea))
+  DelaunayRefinement(rng, asdeg(minangle), isnothing(maxarea) ? nothing : asarea(maxarea))
 
 function refine(mesh, method::DelaunayRefinement)
   assertion(embeddim(mesh) == 2 && manifold(mesh) <: 𝔼, "DelaunayRefinement only defined for 2D meshes")
@@ -57,10 +57,6 @@ function refine(mesh, method::DelaunayRefinement)
 
   SimpleMesh(newpoints, connec)
 end
-
-_asarea(x::Quantity{<:Any,u"𝐋^2"}) = x
-_asarea(x::Number) = x * u"m^2"
-_asarea(::Quantity) = throw(ArgumentError("invalid area unit"))
 
 # closed curves along the boundary of a triangle mesh, counter-clockwise
 # around the domain and clockwise around holes, the outer curve first
