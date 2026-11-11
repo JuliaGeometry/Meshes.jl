@@ -6,7 +6,7 @@ import CairoMakie as Mke # hide
 ```
 
 It is often useful to search neighbor elements in a domain given a
-point of reference. This can be performed with search methods:
+geometry of reference. This can be performed with search methods:
 
 ```@docs
 NeighborSearchMethod
@@ -55,7 +55,8 @@ dists
 ```
 
 Finally, the functions [`search!`](@ref) and [`searchdists!`](@ref)
-can be used in hot loops to avoid unnecessary memory allocations.
+can be used with [`BoundedNeighborSearchMethod`](@ref) in hot loops
+to avoid unnecessary memory allocations.
 
 ## BallSearch
 
@@ -73,4 +74,10 @@ KNearestSearch
 
 ```@docs
 KBallSearch
+```
+
+## BBoxSearch
+
+```@docs
+BBoxSearch
 ```
