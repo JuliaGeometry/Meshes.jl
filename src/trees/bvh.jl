@@ -50,7 +50,7 @@ function BVHTree(boxes::AbstractVector{<:Box}; leafsize=8)
 
   # initialize an empty vector of BVH nodes
   nodes = BVHNode{eltype(boxes)}[]
-  sizehint!(nodes, 2 * cld(nboxes, leafsize))
+  sizehint!(nodes, _bvhnnodes(nboxes, leafsize))
 
   # compute the centers of the bounding boxes
   centers = map(boxes) do box
@@ -65,6 +65,21 @@ function BVHTree(boxes::AbstractVector{<:Box}; leafsize=8)
 
   # return the constructed BVH
   BVHTree(boxes, perm, nodes, leafsize)
+end
+
+function _bvhnnodes(nboxes, leafsize)
+  width = prevpow(2, cld(nboxes, leafsize))
+  n, remainder = divrem(nboxes, width)
+
+  splits = if n > leafsize
+    width
+  elseif n == leafsize
+    remainder
+  else
+    0
+  end
+
+  2 * (width + splits) - 1
 end
 
 function _buildbvh!(nodes, boxes, centers, perm, firstind, lastind, leafsize)
