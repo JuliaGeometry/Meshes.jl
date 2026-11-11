@@ -1133,8 +1133,8 @@ end
   sq1 = Pgon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   sq2 = Pgon(cart(3, 0), cart(4, 0), cart(4, 1), cart(3, 1))
   multi = Multi([sq1, sq2])
+  @test area(box ∪ multi) == area(multi ∪ box)
   @test area(box ∩ multi) ≈ T(0.3) * u"m^2"
-  @test box ∪ multi == multi ∪ box
   @test area(box ∪ multi) ≈ area(box) + area(multi) - area(box ∩ multi)
   @test area(setdiff(box, multi)) ≈ area(box) - area(box ∩ multi)
   @test area(setdiff(multi, box)) ≈ area(multi) - area(box ∩ multi)
@@ -1167,8 +1167,8 @@ end
   sq1 = Pgon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   sq2 = Pgon(cart(3, 0), cart(4, 0), cart(4, 1), cart(3, 1))
   multi = Multi([sq1, sq2])
-  @test area(ball ∪ multi) ≈ area(ball) + area(multi) - area(ball ∩ multi) atol=1e-2u"m^2"
   @test area(multi ∪ ball) ≈ area(ball ∪ multi)
+  @test area(ball ∪ multi) ≈ area(ball) + area(multi) - area(ball ∩ multi) atol=1e-2u"m^2"
   @test area(setdiff(ball, multi)) ≈ area(ball) - area(ball ∩ multi) atol=1e-2u"m^2"
   @test area(setdiff(multi, ball)) ≈ area(multi) - area(ball ∩ multi) atol=1e-2u"m^2"
 end
