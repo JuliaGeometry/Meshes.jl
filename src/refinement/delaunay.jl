@@ -33,8 +33,7 @@ DelaunayRefinement(rng=Random.default_rng(); minangle=30, maxarea=nothing) =
 function refine(mesh, method::DelaunayRefinement)
   assertion(embeddim(mesh) == 2 && manifold(mesh) <: 𝔼, "DelaunayRefinement only defined for 2D meshes")
 
-  # triangles without repeated vertices, as merged meshes have them
-  tmesh = simplexify(mesh |> Repair(0))
+  tmesh = simplexify(mesh)
   points = vertices(tmesh)
   ℒ = lentype(tmesh)
   u = unit(ℒ)
