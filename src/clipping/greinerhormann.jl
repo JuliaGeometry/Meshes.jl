@@ -394,12 +394,15 @@ function _ghstart(list, range, rings)
     any(r -> sideof(point, r) == ON, rings) && continue
     return i, _ghinside(point, rings)
   end
-  # all vertices are intersections, use the midpoint of an edge
-  for i in range
-    j = _ghnext(list, i)
-    m = _ghmidpoint(list.verts[i].point, list.verts[j].point)
-    any(r -> sideof(m, r) == ON, rings) && continue
-    return j, _ghinside(m, rings)
+  # all vertices are intersections, use the midpoint of an edge, and prefer an edge
+  # off the rings, as the midpoint of an edge on a ring can miss it by round-off
+  for onring in (m -> any(r -> m ∈ r, rings), m -> any(r -> sideof(m, r) == ON, rings))
+    for i in range
+      j = _ghnext(list, i)
+      m = _ghmidpoint(list.verts[i].point, list.verts[j].point)
+      onring(m) && continue
+      return j, _ghinside(m, rings)
+    end
   end
   nothing
 end

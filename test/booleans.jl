@@ -1565,6 +1565,16 @@ end
   @test measure(p ∪ q) == measure(q ∪ p) ≈ T(48) * u"m^2"
   @test measure(setdiff(p, q)) ≈ T(6.5) * u"m^2"
 
+  # rotated polygons that share edges
+  p = Pgon([cart.([(2, 1), (5, 1), (5, 4), (2, 4)]), cart.([(3, 2), (3, 3), (4, 3), (4, 2)])])
+  q = Pgon(cart.([(2, 1), (4, 1), (4, 2), (2, 2)]))
+  R = Rotate(Angle2d(T(π / 6)))
+  @test p ∪ q == p
+  @test p ∩ q == q
+  @test R(p) ∪ R(q) ≈ R(p ∪ q)
+  @test R(p) ∩ R(q) ≈ R(p ∩ q)
+  @test setdiff(R(p), R(q)) ≈ R(setdiff(p, q))
+
   # disjoint polygons
   q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   q2 = Quadrangle(cart(10, 10), cart(11, 10), cart(11, 11), cart(10, 11))
