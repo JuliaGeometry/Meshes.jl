@@ -124,3 +124,90 @@ end
   s = KBallSearch([cart(1, 1), cart(2, 2), cart(3, 3)], 3, MetricBall(T(1)))
   @test s isa KBallSearch
 end
+
+@testitem "BBoxSearch" setup = [Setup] begin
+  # basic query
+  boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
+  searcher = BBoxSearch(boxes, leafsize=1)
+  query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
+  answer = findall(box -> intersects(box, query), boxes)
+  result = sort(search(query, searcher))
+  @test result == answer
+
+  # constructor paths with default and explicit leaf sizes
+  geoms = [Triangle(cart(i, i), cart(i + 1, i), cart(i, i + 1)) for i in (0, 2, 4)]
+  boxes = boundingbox.(geoms)
+  gset = GeometrySet(geoms)
+  bset = GeometrySet(boxes)
+  query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
+  for input in (gset, bset, boxes, geoms)
+    @test sort(search(query, BBoxSearch(input))) == [1, 2]
+    @test sort(search(query, BBoxSearch(input, leafsize=1))) == [1, 2]
+  end
+
+  # no candidates
+  boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
+  searcher = BBoxSearch(boxes)
+  query = Box(cart(10, 10), cart(11, 11))
+  @test isempty(search(query, searcher))
+
+  # different leaf sizes
+  boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
+  query = Box(cart(0.5, 0.5), cart(4.5, 4.5))
+  answer = findall(box -> intersects(box, query), boxes)
+  for leafsize in (1, 2, 3, 8)
+    lsearcher = BBoxSearch(boxes; leafsize)
+    @test sort(search(query, lsearcher)) == answer
+  end
+
+  # leaf size greater than or equal to the number of elements
+  boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
+  nboxes = length(boxes)
+  for leafsize in (nboxes, nboxes + 1, 2nboxes)
+    @test sort(search(boundingbox(boxes), BBoxSearch(boxes; leafsize))) == collect(eachindex(boxes))
+  end
+
+  # masks preserve original domain indices
+  boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
+  searcher = BBoxSearch(boxes)
+  query = boundingbox(boxes)
+  mask = [false, true, false]
+  @test search(query, searcher, mask=mask) == [2]
+  @test isempty(search(query, searcher, mask=falses(length(boxes))))
+
+  # invalid leaf size
+  boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
+  @test_throws ArgumentError BBoxSearch(boxes, leafsize=0)
+  @test_throws ArgumentError BBoxSearch(boxes, leafsize=-1)
+
+  # randomized brute-force equivalence
+  rng = StableRNG(1234)
+  boxes = [
+    let
+      xmin = rand(rng) * 100
+      ymin = rand(rng) * 100
+      width = rand(rng) * 10
+      height = rand(rng) * 10
+      Box(cart(xmin, ymin), cart(xmin + width, ymin + height))
+    end for _ in 1:200
+  ]
+  for leafsize in (1, 2, 4, 8, 16)
+    lsearcher = BBoxSearch(boxes; leafsize)
+    for _ in 1:100
+      xmin = rand(rng) * 100
+      ymin = rand(rng) * 100
+      width = rand(rng) * 20
+      height = rand(rng) * 20
+      rquery = Box(cart(xmin, ymin), cart(xmin + width, ymin + height))
+      ranswer = findall(box -> intersects(box, rquery), boxes)
+      rresult = sort(search(rquery, lsearcher))
+      @test rresult == ranswer
+    end
+  end
+
+  # type stability tests
+  boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
+  searcher = BBoxSearch(boxes)
+  query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
+  @inferred search(query, searcher)
+end
