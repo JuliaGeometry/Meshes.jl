@@ -229,13 +229,6 @@ function embedboundary(g::TransformedGeometry)
   end
 end
 
-"""
-    boundary(mesh)
-
-The boundary of the surface `mesh` is a [`Ring`](@ref) for each
-border of the mesh, combined into a [`MultiRing`](@ref) if there
-is more than one border, or `nothing` if there is no border.
-"""
 function boundary(m::Mesh)
   assertion(paramdim(m) == 2, "boundary only defined for surface meshes")
 
@@ -266,13 +259,7 @@ function boundary(m::Mesh)
 
   rings = [Ring([vertex(m, i) for i in inds]) for inds in loops]
 
-  if isempty(rings)
-    nothing
-  elseif length(rings) == 1
-    first(rings)
-  else
-    Multi(rings)
-  end
+  isempty(rings) ? nothing : maybemulti(rings)
 end
 
 """
