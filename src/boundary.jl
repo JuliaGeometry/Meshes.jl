@@ -230,6 +230,52 @@ function embedboundary(g::TransformedGeometry)
 end
 
 """
+    boundary(mesh)
+
+The boundary of the surface `mesh` is a [`Ring`](@ref) for each
+border of the mesh, combined into a [`MultiRing`](@ref) if there
+is more than one border, or `nothing` if there is no border.
+"""
+function boundary(m::Mesh)
+  assertion(paramdim(m) == 2, "boundary only defined for surface meshes")
+
+  t = convert(HalfEdgeTopology, topology(m))
+
+  # half-edges of elements with the border on the other side
+  borders = filter(h -> !isnothing(h.elem) && isnothing(h.half.elem), t.halfedges)
+
+  # turn around the vertex to the next half-edge on the border,
+  # so that borders that touch at a vertex become separate rings
+  loops = Vector{Int}[]
+  visited = Set{HalfEdge}()
+  for h in borders
+    h ∈ visited && continue
+    inds = Int[]
+    e = h
+    while true
+      push!(visited, e)
+      push!(inds, e.head)
+      e = e.next
+      while !isnothing(e.half.elem)
+        e = e.half.next
+      end
+      e === h && break
+    end
+    push!(loops, inds)
+  end
+
+  rings = [Ring([vertex(m, i) for i in inds]) for inds in loops]
+
+  if isempty(rings)
+    nothing
+  elseif length(rings) == 1
+    first(rings)
+  else
+    Multi(rings)
+  end
+end
+
+"""
     boundarypoints(geometry)
 
 Return vector of [`Point`](@ref)s that approximate

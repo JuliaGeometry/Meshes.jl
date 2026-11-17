@@ -315,6 +315,24 @@
   @test paramdim(tb) == 2
   @test embeddim(tb) == 3
   @test embedboundary(tb) == tb
+
+  # mesh
+  grid = cartgrid(2, 2)
+  @test boundary(grid) == Ring(cart.([(0, 0), (1, 0), (2, 0), (2, 1), (2, 2), (1, 2), (0, 2), (0, 1)]))
+  points = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+  mesh = SimpleMesh(points, connect.([(1, 2, 3), (1, 3, 4)]))
+  @test boundary(mesh) == Ring(points)
+  grid = cartgrid(3, 3)
+  mesh = SimpleMesh(collect(vertices(grid)), [element(topology(grid), i) for i in 1:9 if i ≠ 5])
+  outer = Ring(cart.([(0, 0), (1, 0), (2, 0), (3, 0), (3, 1), (3, 2), (3, 3), (2, 3), (1, 3), (0, 3), (0, 2), (0, 1)]))
+  hole = Ring(cart.([(2, 1), (1, 1), (1, 2), (2, 2)]))
+  @test boundary(mesh) == Multi([outer, hole])
+  points = cart.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2)])
+  mesh = SimpleMesh(points, connect.([(1, 2, 3), (3, 4, 5)]))
+  @test boundary(mesh) == Multi([Ring(points[1:3]), Ring(points[3:5])])
+  @test isnothing(boundary(boundary(Box(cart(0, 0, 0), cart(1, 1, 1)))))
+  @test isnothing(boundary(discretize(Sphere(cart(0, 0, 0), T(1)))))
+  @test_throws AssertionError boundary(cartgrid(2, 2, 2))
 end
 
 @testitem "boundarypoints" setup = [Setup] begin
