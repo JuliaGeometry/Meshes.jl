@@ -1107,6 +1107,11 @@ end
   @test intersection(b1, b2) |> type == Overlapping
   @test b1 ∩ b2 == b2 ∩ b1 == Multi([Box(latlon(-5, -150), latlon(5, -30)), Box(latlon(-5, 30), latlon(5, 150))])
 
+  # Box-Box sharing an edge
+  b1 = Box(cart(0, 0), cart(1, 1))
+  b2 = Box(cart(1, 0), cart(2, 1))
+  @test b1 ∪ b2 == Pgon(cart.([(0, 1), (0, 0), (2, 0), (2, 1)]))
+
   # Box-Ball
   box = Box(cart(0, 0), cart(1, 1))
   ball = Ball(cart(1, 1), T(1))
@@ -1545,9 +1550,8 @@ end
   @test p ∩ q == q ∩ p == q
   @test p ∪ q == q ∪ p == p
   @test setdiff(p, q) == Pgon([
-    cart.([(0, 0), (3, 0), (3, 3), (0, 3)]),
-    cart.([(0, 0), (0, 1), (1, 1), (1, 0)]),
-    cart.([(0, 1), (0, 2), (1, 2), (1, 1)])
+    cart.([(0, 1), (0, 0), (3, 0), (3, 3), (0, 3), (0, 2), (1, 2), (1, 1)]),
+    cart.([(0, 0), (0, 1), (1, 1), (1, 0)])
   ])
 
   # hole that touches the outer ring at a vertex of the other polygon
@@ -1564,6 +1568,42 @@ end
   @test measure(p ∩ q) == measure(q ∩ p) ≈ T(17.5) * u"m^2"
   @test measure(p ∪ q) == measure(q ∪ p) ≈ T(48) * u"m^2"
   @test measure(setdiff(p, q)) ≈ T(6.5) * u"m^2"
+
+  # polygons that share an edge
+  p = Pgon(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  q = Pgon(cart.([(1, 0), (2, 0), (2, 1), (1, 1)]))
+  @test p ∪ q ≗ q ∪ p ≗ Pgon(cart.([(0, 1), (0, 0), (2, 0), (2, 1)]))
+  p = Pgon(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  q = Pgon(cart.([(1, 0.5), (2, 0.5), (2, 1.5), (1, 1.5)]))
+  @test p ∪ q == Pgon(cart.([(1, 1), (0, 1), (0, 0), (1, 0), (1, 0.5), (2, 0.5), (2, 1.5), (1, 1.5)]))
+  p = Pgon(cart.([(0, 0), (2, 0), (2, 1), (0, 1)]))
+  q = Pgon(cart.([(1, 0), (2, 0), (2, 1), (1, 1)]))
+  @test setdiff(p, q) == Pgon(cart.([(1, 1), (0, 1), (0, 0), (1, 0)]))
+  p = Pgon(cart.([(0, 0), (3, 0), (3, 3), (2, 3), (2, 1), (1, 1), (1, 3), (0, 3)]))
+  q = Pgon(cart.([(1, 2), (2, 2), (2, 3), (1, 3)]))
+  @test p ∪ q == Pgon([cart.([(0, 3), (0, 0), (3, 0), (3, 3)]), cart.([(2, 2), (2, 1), (1, 1), (1, 2)])])
+  p = Pgon([cart.([(0, 0), (3, 0), (3, 3), (0, 3)]), cart.([(1, 1), (1, 2), (2, 2), (2, 1)])])
+  q = Pgon(cart.([(1, 1), (2, 1), (2, 1.5), (1, 1.5)]))
+  @test p ∪ q == Pgon([cart.([(0, 0), (3, 0), (3, 3), (0, 3)]), cart.([(1, 1.5), (1, 2), (2, 2), (2, 1.5)])])
+
+  # rotated polygons that share edges
+  p = Pgon([cart.([(2, 1), (5, 1), (5, 4), (2, 4)]), cart.([(3, 2), (3, 3), (4, 3), (4, 2)])])
+  q = Pgon(cart.([(2, 1), (4, 1), (4, 2), (2, 2)]))
+  R = Rotate(Angle2d(T(π / 6)))
+  @test p ∪ q == p
+  @test p ∩ q == q
+  @test R(p) ∪ R(q) ≈ R(p ∪ q)
+  @test R(p) ∩ R(q) ≈ R(p ∩ q)
+  @test setdiff(R(p), R(q)) ≈ R(setdiff(p, q))
+
+  # rotated polygons with the same outer ring and a hole that touches it
+  p = Pgon([cart.([(0, 0), (4, 0), (4, 4), (0, 4)]), cart.([(2, 0), (1, 1), (2, 2), (3, 1)])])
+  q = Pgon([cart.([(0, 0), (4, 0), (4, 4), (0, 4)]), cart.([(2, 1), (1, 2), (2, 3), (3, 2)])])
+  R = Rotate(Angle2d(T(2π / 3)))
+  @test R(p) ∪ R(q) ≈ R(p ∪ q)
+  @test R(p) ∩ R(q) ≈ R(p ∩ q)
+  @test setdiff(R(p), R(q)) ≈ R(setdiff(p, q))
+  @test setdiff(R(q), R(p)) ≈ R(setdiff(q, p))
 
   # disjoint polygons
   q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))

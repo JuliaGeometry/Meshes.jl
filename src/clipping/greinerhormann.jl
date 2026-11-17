@@ -41,7 +41,7 @@ function clip(subject, other, method::GreinerHormannClipping)
   slist, olist = _ghintersect(srings, orings)
 
   # labeling phase
-  _ghcrossing!(slist, olist)
+  _ghcrossing!(slist, olist, srings, orings, op)
   _ghentry!(slist, orings)
   _ghentry!(olist, srings)
   op == :∩ || _ghinvert!(slist)
@@ -252,7 +252,7 @@ end
 # ---------------
 
 # mark intersection vertices as crossing or bouncing
-function _ghcrossing!(list₁, list₂)
+function _ghcrossing!(list₁, list₂, rings₁, rings₂, op)
   types = map(eachindex(list₁.verts)) do i
     list₁.verts[i].intersect ? _ghlocaltype(list₁, list₂, i) : :none
   end
@@ -270,6 +270,11 @@ function _ghcrossing!(list₁, list₂)
       y = types[j] == :onleft ? :left : (types[j] == :onright ? :right : :none)
       # delayed crossing if the polygon changes side along the chain
       x ≠ y && y ≠ :none && (list₁.verts[j].crossing = true)
+      # delayed bouncing otherwise, crossed at both ends if the result skips it
+      if x == y && _ghskips(list₁, list₂, i, rings₁, rings₂, op)
+        list₁.verts[i].crossing = true
+        list₁.verts[j].crossing = true
+      end
     end
   end
 
@@ -292,6 +297,32 @@ function _ghchainnext(list₁, list₂, i)
     k == j && break
   end
   j
+end
+
+# whether the result skips the delayed bouncing chain that starts at the vertex,
+# which happens when the chain is not on the boundary of the result, but the edges
+# of both polygons that reach the chain are
+function _ghskips(list₁, list₂, i, rings₁, rings₂, op)
+  p₋ = list₁.verts[_ghprevpoint(list₁, i)]
+  p₀ = list₁.verts[i]
+  p₊ = list₁.verts[_ghnextpoint(list₁, i)]
+
+  q₊ = list₂.verts[_ghnextpoint(list₂, p₀.neighbor)]
+
+  # both polygons are on the left of their rings, so the chain is on the
+  # boundary of the result when they walk it in the same direction
+  p₊.point ≈ q₊.point && return false
+
+  # these edges have no intersections between their end points, but one can still
+  # lie on the other polygon when a hole touches the outer ring, so keep the chain
+  m₁ = _ghmidpoint(p₋.point, p₀.point)
+  m₂ = _ghmidpoint(q₊.point, p₀.point)
+  (any(r -> m₁ ∈ r, rings₂) || any(r -> m₂ ∈ r, rings₁)) && return false
+
+  inside₁ = _ghinside(m₁, rings₂)
+  inside₂ = _ghinside(m₂, rings₁)
+
+  (op == :∩ ? inside₁ : !inside₁) && (op == :∪ ? !inside₂ : inside₂)
 end
 
 # local position of the first polygon with respect to the second one
@@ -394,12 +425,15 @@ function _ghstart(list, range, rings)
     any(r -> sideof(point, r) == ON, rings) && continue
     return i, _ghinside(point, rings)
   end
-  # all vertices are intersections, use the midpoint of an edge
-  for i in range
-    j = _ghnext(list, i)
-    m = _ghmidpoint(list.verts[i].point, list.verts[j].point)
-    any(r -> sideof(m, r) == ON, rings) && continue
-    return j, _ghinside(m, rings)
+  # all vertices are intersections, use the midpoint of an edge, and prefer an edge
+  # off the rings, as the midpoint of an edge on a ring can miss it by round-off
+  for onring in (m -> any(r -> m ∈ r, rings), m -> any(r -> sideof(m, r) == ON, rings))
+    for i in range
+      j = _ghnext(list, i)
+      m = _ghmidpoint(list.verts[i].point, list.verts[j].point)
+      onring(m) && continue
+      return j, _ghinside(m, rings)
+    end
   end
   nothing
 end
