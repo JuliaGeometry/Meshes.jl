@@ -28,6 +28,16 @@ asdeg(x::Number) = x * u"°"
 asdeg(::Quantity) = throw(ArgumentError("invalid angle unit"))
 
 """
+    asarea(x)
+
+Adds square meter unit if the argument is not a quantity
+with area unit, otherwise, returns `x` as is.
+"""
+asarea(x::Quantity{<:Any,u"𝐋^2"}) = x
+asarea(x::Number) = x * u"m^2"
+asarea(::Quantity) = throw(ArgumentError("invalid area unit"))
+
+"""
     aslentype(T)
 
 If `T` has length unit, return it. If `T` is number, return it with meter unit.

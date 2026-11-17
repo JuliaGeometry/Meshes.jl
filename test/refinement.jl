@@ -259,6 +259,54 @@ end
   @test all(g -> perimeter(g) / 4 ≤ T(0.5) * u"m", rmesh)
 end
 
+@testitem "DelaunayRefinement" setup = [Setup] begin
+  # polygon with a hole
+  poly = Pgon(cart.([(0, 0), (10, 0), (10, 10), (0, 10)]), cart.([(3, 3), (3, 7), (7, 7), (7, 3)]))
+  mesh = discretize(poly)
+  rmesh = refine(mesh, DelaunayRefinement(StableRNG(123), maxarea=T(1)))
+  @test eltype(rmesh) <: Triangle
+  @test all(t -> minimum(innerangles(t)) ≥ T(29.9) * u"°", rmesh)
+  @test all(t -> area(t) ≤ T(1) * u"m^2", rmesh)
+  @test sum(area, rmesh) ≈ area(poly)
+  @test vertices(mesh) ⊆ vertices(rmesh)
+
+  # quadrangles of a grid
+  grid = cartgrid(3, 3)
+  rgrid = refine(grid, DelaunayRefinement(StableRNG(123), maxarea=T(0.25)))
+  @test eltype(rgrid) <: Triangle
+  @test all(t -> minimum(innerangles(t)) ≥ T(29.9) * u"°", rgrid)
+  @test all(t -> area(t) ≤ T(0.25) * u"m^2", rgrid)
+  @test sum(area, rgrid) ≈ sum(area, grid)
+
+  # triangles in clockwise order
+  cwmesh = SimpleMesh(vertices(mesh), [connect(reverse(indices(e))) for e in elements(topology(mesh))])
+  rmesh = refine(cwmesh, DelaunayRefinement(StableRNG(123), maxarea=T(1)))
+  @test all(t -> minimum(innerangles(t)) ≥ T(29.9) * u"°", rmesh)
+  @test sum(area, rmesh) ≈ area(poly)
+
+  # merged meshes repaired from repeated vertices
+  quad1 = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  quad2 = Quadrangle(cart(1, 0), cart(2, 0), cart(2, 1), cart(1, 1))
+  mesh = merge(discretize(quad1), discretize(quad2)) |> Repair(0)
+  rmesh = refine(mesh, DelaunayRefinement(StableRNG(123), maxarea=T(0.05)))
+  @test all(t -> area(t) ≤ T(0.05) * u"m^2", rmesh)
+  @test sum(area, rmesh) ≈ T(2) * u"m^2"
+
+  # the boundary must not touch itself
+  quad3 = Quadrangle(cart(1, 1), cart(2, 1), cart(2, 2), cart(1, 2))
+  mesh = merge(discretize(quad1), discretize(quad3)) |> Repair(0)
+  @test_throws AssertionError refine(mesh, DelaunayRefinement())
+
+  # units of the constraints
+  method = DelaunayRefinement(minangle=T(20), maxarea=T(2))
+  @test method.minangle == T(20) * u"°"
+  @test method.maxarea == T(2) * u"m^2"
+  @test_throws ArgumentError DelaunayRefinement(maxarea=T(2) * u"m")
+
+  # only 2D meshes
+  @test_throws AssertionError refine(cartgrid(2, 2, 2), DelaunayRefinement())
+end
+
 @testitem "Refine" setup = [Setup] begin
   # 2D grids
   grid = cartgrid(10, 10)
