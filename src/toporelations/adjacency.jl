@@ -75,28 +75,28 @@ function (𝒜::Adjacency{0,2,T})(vert::Int) where {T<:HalfEdgeTopology}
   e = half4vert(𝒜.topology, vert)
 
   # initialize result
-  inds = [e.half.head]
+  inds = [head(half(e))]
 
   # search in CCW orientation
-  p = e.prev
-  h = p.half
-  while !isnothing(h.elem) && h ≠ e
-    push!(inds, p.head)
-    p = h.prev
-    h = p.half
+  p = prev(e)
+  h = half(p)
+  while !isnothing(elem(h)) && h ≠ e
+    push!(inds, head(p))
+    p = prev(h)
+    h = half(p)
   end
 
   # if border edge is hit
-  if isnothing(h.elem)
+  if isnothing(elem(h))
     # add last arm manually
-    push!(inds, p.head)
+    push!(inds, head(p))
 
     # search in CW orientation
-    h = e.half
-    while !isnothing(h.elem)
-      n = h.next
-      h = n.half
-      pushfirst!(inds, h.head)
+    h = half(e)
+    while !isnothing(elem(h))
+      n = next(h)
+      h = half(n)
+      pushfirst!(inds, head(h))
     end
   end
 
@@ -108,14 +108,14 @@ function (𝒜::Adjacency{2,2,T})(ind::Int) where {T<:HalfEdgeTopology}
   inds = Int[]
 
   e = half4elem(𝒜.topology, ind)
-  i = e.half.elem
+  i = elem(half(e))
   isnothing(i) || push!(inds, i)
 
-  n = e.next
+  n = next(e)
   while n ≠ e
-    i = n.half.elem
+    i = elem(half(n))
     isnothing(i) || push!(inds, i)
-    n = n.next
+    n = next(n)
   end
 
   ntuple(i -> inds[i], length(inds))

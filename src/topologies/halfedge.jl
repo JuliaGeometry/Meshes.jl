@@ -22,6 +22,42 @@ mutable struct HalfEdge
 end
 
 """
+    head(halfedge)
+
+Return the index of the head vertex of the `halfedge`.
+"""
+head(e::HalfEdge) = e.head
+
+"""
+    elem(halfedge)
+
+Return the index of the element to the left of the `halfedge`,
+or `nothing` if the `halfedge` is on the border of the mesh.
+"""
+elem(e::HalfEdge) = e.elem
+
+"""
+    prev(halfedge)
+
+Return the previous half-edge in the element to the left of the `halfedge`.
+"""
+prev(e::HalfEdge) = e.prev
+
+"""
+    next(halfedge)
+
+Return the next half-edge in the element to the left of the `halfedge`.
+"""
+next(e::HalfEdge) = e.next
+
+"""
+    half(halfedge)
+
+Return the opposite half-edge of the `halfedge`.
+"""
+half(e::HalfEdge) = e.half
+
+"""
     loop(halfedge)
 
 Loop over the heads of a cycle starting at given `halfedge`.
@@ -252,6 +288,13 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 end
 
 paramdim(::HalfEdgeTopology) = 2
+
+"""
+    halfedges(t)
+
+Return all half-edges of the half-edge topology `t`.
+"""
+halfedges(t::HalfEdgeTopology) = t.halfedges
 
 """
     half4elem(t, e)

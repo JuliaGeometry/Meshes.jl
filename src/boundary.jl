@@ -229,6 +229,39 @@ function embedboundary(g::TransformedGeometry)
   end
 end
 
+function boundary(m::Mesh)
+  assertion(paramdim(m) == 2, "boundary only defined for surface meshes")
+
+  t = convert(HalfEdgeTopology, topology(m))
+
+  # half-edges of elements with the border on the other side
+  borders = filter(h -> !isnothing(elem(h)) && isnothing(elem(half(h))), halfedges(t))
+
+  # turn around the vertex to the next half-edge on the border,
+  # so that borders that touch at a vertex become separate rings
+  loops = Vector{Int}[]
+  visited = Set{HalfEdge}()
+  for h in borders
+    h ∈ visited && continue
+    inds = Int[]
+    e = h
+    while true
+      push!(visited, e)
+      push!(inds, head(e))
+      e = next(e)
+      while !isnothing(elem(half(e)))
+        e = next(half(e))
+      end
+      e === h && break
+    end
+    push!(loops, inds)
+  end
+
+  rings = [Ring([vertex(m, i) for i in inds]) for inds in loops]
+
+  isempty(rings) ? nothing : maybemulti(rings)
+end
+
 """
     boundarypoints(geometry)
 

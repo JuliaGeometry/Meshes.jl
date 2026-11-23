@@ -225,7 +225,7 @@ end
 function (∂::Boundary{1,0,2,T})(edge::Int) where {T<:HalfEdgeTopology}
   t = ∂.topology
   e = half4edge(t, edge)
-  (e.head, e.half.head)
+  (head(e), head(half(e)))
 end
 
 # ----------------
