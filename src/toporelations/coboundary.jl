@@ -91,25 +91,25 @@ function (𝒞::Coboundary{0,2,2,T})(ind::Int) where {T<:HalfEdgeTopology}
   e = half4vert(𝒞.topology, ind)
 
   # initialize result
-  inds = [e.elem]
+  inds = [elem(e)]
 
   # search in CCW orientation
-  p = e.prev
-  h = p.half
-  while !isnothing(h.elem) && h ≠ e
-    push!(inds, h.elem)
-    p = h.prev
-    h = p.half
+  p = prev(e)
+  h = half(p)
+  while !isnothing(elem(h)) && h ≠ e
+    push!(inds, elem(h))
+    p = prev(h)
+    h = half(p)
   end
 
   # if border edge is hit
-  if isnothing(h.elem)
+  if isnothing(elem(h))
     # search in CW orientation
-    h = e.half
-    while !isnothing(h.elem)
-      pushfirst!(inds, h.elem)
-      n = h.next
-      h = n.half
+    h = half(e)
+    while !isnothing(elem(h))
+      pushfirst!(inds, elem(h))
+      n = next(h)
+      h = half(n)
     end
   end
 
@@ -119,5 +119,5 @@ end
 # elements sharing a segment in 2D mesh
 function (𝒞::Coboundary{1,2,2,T})(ind::Int) where {T<:HalfEdgeTopology}
   e = half4edge(𝒞.topology, ind)
-  isnothing(e.half.elem) ? (e.elem,) : (e.elem, e.half.elem)
+  isnothing(elem(half(e))) ? (elem(e),) : (elem(e), elem(half(e)))
 end

@@ -235,7 +235,7 @@ function boundary(m::Mesh)
   t = convert(HalfEdgeTopology, topology(m))
 
   # half-edges of elements with the border on the other side
-  borders = filter(h -> !isnothing(h.elem) && isnothing(h.half.elem), t.halfedges)
+  borders = filter(h -> !isnothing(elem(h)) && isnothing(elem(half(h))), halfedges(t))
 
   # turn around the vertex to the next half-edge on the border,
   # so that borders that touch at a vertex become separate rings
@@ -247,10 +247,10 @@ function boundary(m::Mesh)
     e = h
     while true
       push!(visited, e)
-      push!(inds, e.head)
-      e = e.next
-      while !isnothing(e.half.elem)
-        e = e.half.next
+      push!(inds, head(e))
+      e = next(e)
+      while !isnothing(elem(half(e)))
+        e = next(half(e))
       end
       e === h && break
     end
