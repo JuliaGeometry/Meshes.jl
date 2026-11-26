@@ -57,46 +57,24 @@ function refine(mesh, method::DelaunayRefinement)
   SimpleMesh(newpoints, connec)
 end
 
-# closed curves along the boundary of a triangle mesh, counter-clockwise
+# closed curves of vertex indices along the boundary of a mesh, counter-clockwise
 # around the domain and clockwise around holes, the outer curve first
 function _boundarycurves(mesh)
-  points = vertices(mesh)
+  bound = boundary(mesh)
+  brings = bound isa Multi ? parent(bound) : [bound]
 
-  # edges used by one triangle only, oriented with the triangle
-  nuses = Dict{NTuple{2,Int},Int}()
-  edges = NTuple{2,Int}[]
-  for elem in elements(topology(mesh))
-    i, j, k = indices(elem)
-    isnegative(signarea(points[i], points[j], points[k])) && ((j, k) = (k, j))
-    for e in ((i, j), (j, k), (k, i))
-      push!(edges, e)
-      nuses[minmax(e...)] = get(nuses, minmax(e...), 0) + 1
-    end
-  end
-  succ = Dict{Int,Int}()
-  for (i, j) in edges
-    nuses[minmax(i, j)] == 1 || continue
-    assertion(!haskey(succ, i), "DelaunayRefinement needs a boundary that does not touch itself")
-    succ[i] = j
-  end
+  # the outer curve encloses the holes, so it has the largest area
+  curves = sort(brings, by=r -> measure(Pgon(r)), rev=true)
+  outer = first(curves)
 
-  # chain the boundary edges into closed curves
-  curves = Vector{Int}[]
-  seen = Set{Int}()
-  for s in sort!(collect(keys(succ)))
-    s ∈ seen && continue
-    curve = [s]
-    v = succ[s]
-    while v ≠ s
-      push!(curve, v)
-      push!(seen, v)
-      v = succ[v]
-    end
-    push!(seen, s)
-    push!(curves, [curve; s])
-  end
+  # a curve outside of the outer one bounds another piece of the mesh
+  insideouter(r) = all(v -> sideof(v, outer) ≠ OUT, eachvertex(r))
+  assertion(all(insideouter, curves[2:end]), "DelaunayRefinement needs a mesh with a single outer boundary")
 
-  # the outer curve has the largest area
-  sarea(c) = sum(i -> signarea(points[c[1]], points[c[i]], points[c[i + 1]]), 2:(length(c) - 2))
-  sort!(curves, by=sarea, rev=true)
+  index = Dict(v => i for (i, v) in enumerate(vertices(mesh)))
+  map(enumerate(curves)) do (i, r)
+    ring = orientation(r) == (isone(i) ? CCW : CW) ? r : reverse(r)
+    inds = [index[v] for v in eachvertex(ring)]
+    [inds; first(inds)]
+  end
 end
